@@ -14,12 +14,18 @@
   * limitations under the License.
   */
 
-package de.tuberlin.dima.mlbench.datagen.spark
+package de.jessepeng.mlbench.datagen.flink
+
+import java.util
+
+import org.apache.flink.api.scala.ExecutionEnvironment
+import org.apache.flink.util.SplittableIterator
 import org.apache.spark._
+
 import scala.util.Random
 
 
-object SparkKMeansGen {
+object FlinkKMeansGen {
 
   /**
     * Helper function to estimate the number of data points that need to be
@@ -46,6 +52,8 @@ object SparkKMeansGen {
     val conf = new SparkConf()
       .setAppName("KMeansDataGenerator")
     val sc = new SparkContext(conf)
+
+    val execEnv = ExecutionEnvironment.getExecutionEnvironment
 
     assert(args.nonEmpty)
 
@@ -93,6 +101,8 @@ object SparkKMeansGen {
 
     System.err.println("NUM DATAPOINTS:   " + numDataPoints)
     System.err.println("NUM K DIMENSIONS:   " + centroids(0).length)
+
+    val flinkDataset = execEnv.fromParallelCollection(new KMeansSplittableIterator(numTasks, seed, k, sigma, pointsPerTask, numDimensions, noisePerc, sigma_limit))
 
     val dataset = sc.parallelize(0 until numTasks, numTasks).flatMap(i => {
       val rand = new Random(seed + i)
@@ -146,12 +156,52 @@ object SparkKMeansGen {
     val halfRange = range / 2
     val points: Array[Array[Double]] = Array.ofDim[Double](num, dimensions)
 
-    for(i <-0 until num){
-      for(dim <- 0 until dimensions){
+    for (i <- 0 until num) {
+      for (dim <- 0 until dimensions) {
         points(i)(dim) = (rnd.nextDouble() * range) - halfRange
       }
     }
 
     return points
+  }
+
+  class KMeansSplittableIterator(splits: Int,
+                                 seed: Int,
+                                 k: Int,
+                                 sigma: Array[Double],
+                                 pointsPerTask: Int,
+                                 numDimensions: Int,
+                                 noisePerc: Double,
+                                 sigma_limit: Double)
+                                (implicit centroids: Array[Array[Double]]) extends SplittableIterator[Array[Double]] {
+    val splitIterators: Array[util.Iterator[Array[Double]]]
+
+    override def getMaximumNumberOfSplits: Int = splits
+
+    override def split(n: Int): Array[util.Iterator[Array[Double]]] = {
+      if (splitIterators == null) {
+        splitIterators = for (i <- 0 until n) yield {
+          val rand = new Random(seed + i)
+
+          for (j <- List.range(0, pointsPerTask).iterator) yield {
+            val centroidID = rand.nextInt(k)
+            val centroid = centroids(centroidID)
+            val noiseOrNot = rand.nextDouble()
+            var vec:Array[Double] = Array.ofDim[Double](numDimensions)
+            if (noiseOrNot >= 1.0 - noisePerc) {
+              vec = for (x <- centroid) yield x + rand.nextDouble() * sigma_limit // generate random number for evey dimension
+            } else {
+              vec = for (x <- centroid) yield x + sigma(centroidID) * rand.nextGaussian() // sample gaussian with stdev
+            }
+            vec
+          }
+        }
+      }
+      splitIterators
+    }
+
+    override def next(): Array[Double] = ???
+
+    override def hasNext: Boolean = ???
   }
 }

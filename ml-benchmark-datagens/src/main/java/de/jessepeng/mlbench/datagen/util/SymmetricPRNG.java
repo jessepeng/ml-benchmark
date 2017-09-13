@@ -1,4 +1,4 @@
-package de.tuberlin.dima.mlbench.datagen.util;
+package de.jessepeng.mlbench.datagen.util;
 
 
 public interface SymmetricPRNG {

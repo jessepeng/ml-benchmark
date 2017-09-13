@@ -1,4 +1,4 @@
-package de.tuberlin.dima.mlbench.datagen.util;
+package de.jessepeng.mlbench.datagen.util;
 
 /**
  * c.f. "Press, William H. Numerical recipes 3rd edition: The art of scientific computing. Cambridge
