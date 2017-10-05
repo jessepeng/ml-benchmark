@@ -40,24 +40,24 @@ class ExperimentsFlinkKMeans extends ApplicationContextAware {
     this.ctx = ctx
   }
 
-  @Bean(name = Array("flink.kmeans.production-scaling"))
-  def `flink.kmeans.production-scaling`: ExperimentSuite = new ExperimentSuite(
+  @Bean(name = Array("flink.kmeans.suite"))
+  def `flink.kmeans.suite`: ExperimentSuite = new ExperimentSuite(
     for {
       topXXX /*     */ <- Seq("all")
       dimensions /* */ <- Seq(100)
-      k /*          */ <- Seq(30)
-      size             <- Seq(5.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0)
+      k /*          */ <- Seq(10)
+      size             <- Seq("100g", "200g", "500g", "1t")
 
     } yield new FlinkExperiment(
-      name = s"kmeans.flink.train.$topXXX.$k.$dimensions.$size",
+      name = s"kmeans.flink.$topXXX.$k.$dimensions.$size",
       command =
         s"""
-           |--class dima.tu.berlin.benchmark.flink.kmeans.RUN                  \\
-           |$${app.path.apps}/peel-bundle-flink-jobs-1.0-SNAPSHOT.jar           \\
-           |--inCentersPath=$${system.hadoop-2.path.input}/train/$dimensions/centers/$size/$k  \\
-           |--inInitPath=$${system.hadoop-2.path.input}/train/$dimensions/init/$size/$k  \\
-           |--inDataPath=$${system.hadoop-2.path.input}/train/$dimensions/$size/$k  \\
-           |--outputPath=$${system.hadoop-2.path.output}/benchmark/$topXXX/$k/$dimensions/$size        \\
+           |--class de.tuberlin.dima.mlbench.flink.kmeans.RUN                  \\
+           |$${app.path.apps}/ml-benchmark-flink-jobs-1.0-SNAPSHOT.jar           \\
+           |--inCentersPath=$${app.path.work}/benchmarks/$size/centers.dat  \\
+           |--inInitPath=$${app.path.work}/benchmarks/$size/init.dat  \\
+           |--inDataPath=$${app.path.work}/benchmarks/$size/data.dat  \\
+           |--outputPath=$${app.path.work}/benchmarks/$size/output        \\
            |--iterations=$${scale.iterations}                                   \\
            |--degOfParall=$${system.default.config.parallelism.total}           \\
            |--numDimensions=$dimensions                                            \\
@@ -71,33 +71,31 @@ class ExperimentsFlinkKMeans extends ApplicationContextAware {
            |scale.iterations                        = 5
           """.stripMargin.trim),
       runs = 1,
-      runner = ctx.getBean("flink-1.0.3", classOf[Flink]),
+      runner = ctx.getBean("flink-1.3.2", classOf[Flink]),
       systems = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs = Set(ctx.getBean(s"dataset.kmeans.generated.$dimensions.$size.$k.$topXXX", classOf[DataSet])),
-      outputs = Set(ctx.getBean("benchmark.output", classOf[ExperimentOutput]))
+      inputs = Set(),
+      outputs = Set()
     )
   )
 
-
-
-  @Bean(name = Array("flink.kmeans.strong-scaling"))
-  def `flink.kmeans.strong-scaling`: ExperimentSuite = new ExperimentSuite(
+  @Bean(name = Array("flink.kmeans.small"))
+  def `flink.kmeans.small`: ExperimentSuite = new ExperimentSuite(
     for {
-      topXXX /*     */ <- Seq("all", "top024", "top018", "top012", "top010", "top008", "top006")
+      topXXX /*     */ <- Seq("all")
       dimensions /* */ <- Seq(100)
-      k /*          */ <- Seq(30)
-      size             <- Seq(200.0)
+      k /*          */ <- Seq(10)
+      size             <- Seq("1M")
 
     } yield new FlinkExperiment(
-      name = s"kmeans.flink.train.$topXXX.$k.$dimensions.$size",
+      name = s"kmeans.flink.$topXXX.$k.$dimensions.$size",
       command =
         s"""
-           |--class dima.tu.berlin.benchmark.flink.kmeans.RUN                  \\
-           |$${app.path.apps}/peel-bundle-flink-jobs-1.0-SNAPSHOT.jar           \\
-           |--inCentersPath=$${system.hadoop-2.path.input}/train/$dimensions/centers/$size/$k  \\
-           |--inInitPath=$${system.hadoop-2.path.input}/train/$dimensions/init/$size/$k  \\
-           |--inDataPath=$${system.hadoop-2.path.input}/train/$dimensions/$size/$k  \\
-           |--outputPath=$${system.hadoop-2.path.output}/benchmark/$topXXX/$k/$dimensions/$size        \\
+           |--class de.tuberlin.dima.mlbench.flink.kmeans.RUN                  \\
+           |$${app.path.apps}/ml-benchmark-flink-jobs-1.0-SNAPSHOT.jar           \\
+           |--inCentersPath=$${app.path.work}/benchmarks/$size/centers.dat  \\
+           |--inInitPath=$${app.path.work}/benchmarks/$size/init.dat  \\
+           |--inDataPath=$${app.path.work}/benchmarks/$size/data.dat  \\
+           |--outputPath=$${app.path.work}/benchmarks/$size/output        \\
            |--iterations=$${scale.iterations}                                   \\
            |--degOfParall=$${system.default.config.parallelism.total}           \\
            |--numDimensions=$dimensions                                            \\
@@ -111,10 +109,10 @@ class ExperimentsFlinkKMeans extends ApplicationContextAware {
            |scale.iterations                        = 5
           """.stripMargin.trim),
       runs = 1,
-      runner = ctx.getBean("flink-1.0.3", classOf[Flink]),
+      runner = ctx.getBean("flink-1.3.2", classOf[Flink]),
       systems = Set(ctx.getBean("dstat-0.7.2", classOf[Dstat])),
-      inputs = Set(ctx.getBean(s"dataset.kmeans.generated.$dimensions.$size.$k.$topXXX", classOf[DataSet])),
-      outputs = Set(ctx.getBean("benchmark.output", classOf[ExperimentOutput]))
+      inputs = Set(),
+      outputs = Set()
     )
   )
 

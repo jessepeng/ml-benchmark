@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.tuberlin.dima</groupId>
+    <groupId>de.jessepeng</groupId>
     <artifactId>ml-benchmark</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -30,7 +30,7 @@
         <scala.version>2.10.3</scala.version>
 
         <!-- Peel -->
-        <peel.version>1.1.3</peel.version>
+        <peel.version>1.1.7</peel.version>
     </properties>
 
     <dependencyManagement>
@@ -54,11 +54,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ml-benchmark-flink-jobs</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>ml-benchmark-spark-jobs</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
 
@@ -178,6 +173,5 @@
     <module>ml-benchmark-peelextensions</module>
     <module>ml-benchmark-datagens</module>
     <module>ml-benchmark-flink-jobs</module>
-    <module>ml-benchmark-spark-jobs</module>
   </modules>
 </project>

@@ -95,7 +95,7 @@ else
 fi
 
 # Default classpath 
-CLASSPATH=`manglePathList $( echo ${PEEL_LIB_DIR}/*.jar . | sed 's/ /:/g' )`
+CLASSPATH=`manglePathList $( echo ${PEEL_LIB_DIR}/* . | sed 's/ /:/g' )`
 
 # Run command
 ${JAVA_RUN} -cp ${CLASSPATH} ${PEEL_JAVA_OPTS} org.peelframework.core.cli.Peel $@

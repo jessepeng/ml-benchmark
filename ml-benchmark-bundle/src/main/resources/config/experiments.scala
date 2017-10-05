@@ -42,7 +42,6 @@ import org.springframework.context.{ApplicationContext, ApplicationContextAware}
 
   /*** KMeans beans declaration ***/
   classOf[config.ExperimentsFlinkKMeans]
-  classOf[config.ExperimentsSparkKMeans]
 
 ))
 class experiments extends ApplicationContextAware {

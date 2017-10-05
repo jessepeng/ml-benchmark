@@ -40,25 +40,11 @@ class systems extends ApplicationContextAware {
   // ---------------------------------------------------
 
 
-  @Bean(name = Array("flink-1.0.3"))
-  def `flink-1.0.3`: Flink = new Flink(
-    version = "1.0.3",
+  @Bean(name = Array("flink-1.3.2"))
+  def `flink-1.3.1`: Flink = new Flink(
+    version = "1.3.2",
     configKey = "flink",
     lifespan = Lifespan.EXPERIMENT,
-    dependencies = Set(
-      ctx.getBean("hdfs-2.7.1", classOf[HDFS2])),
     mc = ctx.getBean(classOf[Mustache.Compiler])
   )
-
-
-  @Bean(name = Array("spark-1.6.2"))
-  def `spark-1.6.2`: Spark = new Spark(
-    version = "1.6.2",
-    configKey = "spark",
-    lifespan = Lifespan.EXPERIMENT,
-    dependencies = Set(
-      ctx.getBean("hdfs-2.7.1", classOf[HDFS2])),
-    mc = ctx.getBean(classOf[Mustache.Compiler])
-  )
-
 }

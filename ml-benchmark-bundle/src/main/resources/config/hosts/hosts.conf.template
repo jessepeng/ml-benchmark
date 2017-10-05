@@ -1,0 +1,29 @@
+env {
+  masters = $MASTERS
+  per-node= {
+    parallelism = 68
+    memory = 103079215104
+  }
+  slaves {
+    # all slaves
+    all = {
+      total = {
+        hosts = $NO_OF_HOSTS
+        parallelism = $PARALLELISM
+        memory = $MEMORY
+      }
+      hosts = [$HOSTS]
+    }
+  }
+}
+
+system {
+  flink {
+    config {
+      yaml {
+        jobmanager.rpc.address = $JOBMANAGER
+        taskmanager.tmp.dirs = $TMP_DIR
+      }
+    }
+  }
+}

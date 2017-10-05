@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>de.tuberlin.dima</groupId>
+        <groupId>de.jessepeng</groupId>
         <artifactId>ml-benchmark</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -43,10 +43,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ml-benchmark-flink-jobs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ml-benchmark-spark-jobs</artifactId>
         </dependency>
 
         <!-- Peel -->
