@@ -69,6 +69,7 @@ class ExperimentsFlinkKMeans extends ApplicationContextAware {
            |system.default.config.slaves            = $${env.slaves.$topXXX.hosts}
            |system.default.config.parallelism.total = $${env.slaves.$topXXX.total.parallelism}
            |scale.iterations                        = 5
+           |system.flink.additional_logpath         = $size
           """.stripMargin.trim),
       runs = 1,
       runner = ctx.getBean("flink-1.3.2", classOf[Flink]),
@@ -107,6 +108,7 @@ class ExperimentsFlinkKMeans extends ApplicationContextAware {
            |system.default.config.slaves            = $${env.slaves.$topXXX.hosts}
            |system.default.config.parallelism.total = $${env.slaves.$topXXX.total.parallelism}
            |scale.iterations                        = 5
+           |system.flink.additional_logpath         = $size
           """.stripMargin.trim),
       runs = 1,
       runner = ctx.getBean("flink-1.3.2", classOf[Flink]),
