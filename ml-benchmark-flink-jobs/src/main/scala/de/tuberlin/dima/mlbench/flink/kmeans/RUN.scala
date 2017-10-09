@@ -57,7 +57,6 @@ object RUN {
     method match {
       case "DEFAULT" => {
         val points: DataSet[BDVector[Double]] = KMeans.getBreezePointDataSet(env, inDataPath)
-        val centroids: DataSet[BDVector[Double]] = KMeans.getBreezeCentroidDataSet(env, inCentersPath)
         val initCentroids: DataSet[(Int, BDVector[Double])] = KMeans.getBreezeInitCentersDataSet(env, inInitPath)
         val finalCentroids: DataSet[(Int, BDVector[Double])] = KMeans.computeBreezeClustering(points, initCentroids, numIterations)
         finalCentroids.writeAsText(outCentersPath, FileSystem.WriteMode.OVERWRITE)
@@ -65,7 +64,6 @@ object RUN {
       }
       case "FLINK" => {
         val points: DataSet[Vector] = KMeans.getPointDataSet(env, inDataPath)
-        val centroids: DataSet[Vector] = KMeans.getCentroidDataSet(env, inCentersPath)
         val initCentroids: DataSet[(Int, Vector)] = KMeans.getInitCentersDataSet(env, inInitPath)
         val finalCentroids: DataSet[(Int, Vector)] = KMeans.computeFlinkClustering(points, initCentroids, numIterations)
         finalCentroids.writeAsText(outCentersPath, FileSystem.WriteMode.OVERWRITE)

@@ -100,7 +100,7 @@ class ExperimentsFlinkKMeans extends ApplicationContextAware {
            |--iterations=$${scale.iterations}                                   \\
            |--degOfParall=$${system.default.config.parallelism.total}           \\
            |--numDimensions=$dimensions                                            \\
-           |--method=DEFAULT                                            \\
+           |--method=FLINK                                            \\
            |--k=$k
           """.stripMargin.trim,
       config = ConfigFactory.parseString(
