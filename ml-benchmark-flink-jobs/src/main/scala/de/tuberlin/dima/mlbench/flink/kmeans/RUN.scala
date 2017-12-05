@@ -18,9 +18,9 @@ package de.tuberlin.dima.mlbench.flink.kmeans
 
 import de.tuberlin.dima.mlbench.flink.kmeans.optimizers.KMeans
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment}
-import org.apache.flink.core.fs.FileSystem
 import org.apache.flink.ml.math.Vector
-import breeze.linalg.{Vector => BVector, DenseVector => BDVector, SparseVector => BSVector}
+import breeze.linalg.{DenseVector => BDVector}
+import org.apache.flink.api.java.io.DiscardingOutputFormat
 
 
 object RUN {
@@ -40,7 +40,6 @@ object RUN {
     val inCentersPath = options.get("inCentersPath").get
     val inInitPath = options.get("inInitPath").get
     val inDataPath = options.get("inDataPath").get
-    val outCentersPath = options.get("outputPath").get
     val numFeatures = options.get("numDimensions").get.toInt
     val numClusters = options.get("k").get.toInt
     val numIterations = options.get("iterations").get.toInt
@@ -59,14 +58,14 @@ object RUN {
         val points: DataSet[BDVector[Double]] = KMeans.getBreezePointDataSet(env, inDataPath)
         val initCentroids: DataSet[(Int, BDVector[Double])] = KMeans.getBreezeInitCentersDataSet(env, inInitPath)
         val finalCentroids: DataSet[(Int, BDVector[Double])] = KMeans.computeBreezeClustering(points, initCentroids, numIterations)
-        finalCentroids.writeAsText(outCentersPath, FileSystem.WriteMode.OVERWRITE)
+        finalCentroids.output(new DiscardingOutputFormat[(Int, BDVector[Double])])
 
       }
       case "FLINK" => {
         val points: DataSet[Vector] = KMeans.getPointDataSet(env, inDataPath)
         val initCentroids: DataSet[(Int, Vector)] = KMeans.getInitCentersDataSet(env, inInitPath)
         val finalCentroids: DataSet[(Int, Vector)] = KMeans.computeFlinkClustering(points, initCentroids, numIterations)
-        finalCentroids.writeAsText(outCentersPath, FileSystem.WriteMode.OVERWRITE)
+        finalCentroids.output(new DiscardingOutputFormat[(Int, Vector)])
       }
       case _ => throw new IllegalArgumentException(s"$method is not a valid method argument. Job execution aborted.")
     }
